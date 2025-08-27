@@ -1,7 +1,12 @@
 // 소켓 연결.인증, 이벤트 송수신, 디자인 미리보기 모드 지원
 (() => {
   const search = new URLSearchParams(location.search);
-  const designMode = search.get('design') === '1';
+  // 임시 서버(예: :3000)나 로컬호스트에서 열면 자동 디자인 모드
+  const designMode =
+    search.get('design') === '1' ||
+    location.hostname === 'localhost' ||
+    location.hostname === '127.0.0.1' ||
+    (location.port && location.port !== '8000');
 
   const tokenEl = document.getElementById('token');
   const connectBtn = document.getElementById('connectBtn');
@@ -32,8 +37,10 @@
       __authHandler: null
     };
 
-    // 더미 영상(로컬 이미지)
-    streamEl.src = '/assets/placeholder.jpg';
+    // 더미 영상(로컬 이미지, 사이즈: 750 x 600)
+    streamEl.width = 750;
+    streamEl.height = 600;
+    streamEl.src = 'assets/placeholder.jpg';
 
     connectBtn.onclick = () => {
       authed = true;
@@ -46,8 +53,8 @@
     socket = ioSock;
 
     // 영상 스트림 주소 구성(같은 호스트 가정)
-    const base = window.location.origin.replace(/:\d+$/, ':9000');
-    streamEl.src = `${base}/mjpg`;
+    const mjpegHost = `${location.protocol}//${location.hostname}:9000`;
+    streamEl.src = `${mjpegHost}/mjpg`;
 
     connectBtn.onclick = () => {
       socket.emit('auth', { token: tokenEl.value || '000000' });

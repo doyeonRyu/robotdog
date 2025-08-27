@@ -19,16 +19,28 @@
       <div class="row">
         <input id="token" placeholder="토큰" />
         <button id="connectBtn">연결</button>
-        <span class="hint">디자인 미리보기: ?design=1 로 접속</span>
       </div>
       <div class="row">
         <div id="joyL" class="joy">L</div>
         <div id="joyR" class="joy">R</div>
       </div>
       <div class="row">
-        <button class="cmd" data-name="sit">stand</button>
-        <button class="cmd" data-name="stand up">sit</button>
-        <button class="cmd" data-name="lie down">lie</button>
+        <div class="column">
+          <button class="cmd" data-name="stand">stand</button>
+          <button class="cmd" data-name="sit">sit</button>
+          <button class="cmd" data-name="lie">lie</button>
+          <button class="cmd" data-name="lie_with_hands_out">lie_with_hands_out</button>
+        </div>
+        <div class="column">
+          <button class="cmd" data-name="trot">trot</button>
+          <button class="cmd" data-name="forward">forward</button>
+          <button class="cmd" data-name="backward">backward</button>
+        </div>
+        <div class="column">
+          <button class="cmd" data-name="turn_left">turn_left</button>
+          <button class="cmd" data-name="turn_right">turn_right</button>
+
+        </div>
       </div>
       <div class="row">
         <label><input type="checkbox" id="faceToggle" />face detection</label>
@@ -42,11 +54,8 @@
     </div>
   </div>
 
-  <script>
-    // 영상 스트림 URL은 서버가 띄워주는 포트와 별개(:9000/mjpg 사용 가정)
-    fetch('/js/app.js').then(r=>r.text()).then(eval);
-  </script>
-  <script src="/js/joystick.js"></script>
-  <script src="/js/voice.js"></script>
+  <script src="js/joystick.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

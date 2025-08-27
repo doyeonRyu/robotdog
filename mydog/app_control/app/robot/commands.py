@@ -73,7 +73,7 @@ class CommandExecutor:
                 "status": STATUS_LIE,
             },
             "stand up": {
-                "commands": ["stand up"],
+                "commands": ["stand up", "stand"],
                 "function": lambda: self.dog.do_action('stand', speed=70),
                 "head_pitch": STAND_HEAD_PITCH,
                 "status": STATUS_STAND,
