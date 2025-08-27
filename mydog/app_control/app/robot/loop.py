@@ -16,8 +16,8 @@ def map_range(val, in_min, in_max, out_min, out_max):
 def loop(control_state, on_state):
     '''
     함수 설명: 주 제어 루프(조이스틱/버튼/음성 상태를 읽어 동작 수행)
-    입력값: control_state(ControlState), on_state(callable: 상태 브로드캐스트)
-    출력값: 없음(무한 루프)
+    입력값: control_state(ControlState), on_state(callable)
+    출력값: 없음
     '''
     command = None
     last_kx = last_ky = last_qx = last_qy = 0
@@ -25,7 +25,7 @@ def loop(control_state, on_state):
     while True:
         snap = control_state.snapshot()
 
-        # 거리 센서 값(가짜)
+        # 거리 센서 값 읽어 Web UI로 브로드캐스트
         distance = round(my_dog.read_distance(), 2)
         on_state({"distance": distance})
 
@@ -48,7 +48,7 @@ def loop(control_state, on_state):
             else:
                 command = None
 
-        # 우측 조이스틱(머리)
+        # 우측 조이스틱(머리 제어)
         qx, qy = snap['qx'], snap['qy']
         if (last_qx, last_qy) != (qx, qy):
             last_qx, last_qy = qx, qy
@@ -60,11 +60,11 @@ def loop(control_state, on_state):
                 pitch = 0
             my_dog.set_head(yaw=yaw, pitch=pitch)
 
-        # 버튼
+        # 버튼 명령
         if snap['last_btn']:
             command = snap['last_btn']
 
-        # 음성
+        # 음성 명령
         if snap['voice_text'] and snap['voice_text'] in AVAILABLE_COMMANDS:
             command = snap['voice_text']
 

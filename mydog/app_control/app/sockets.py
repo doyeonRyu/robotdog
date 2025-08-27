@@ -1,18 +1,16 @@
 from flask_socketio import SocketIO, emit, disconnect
 
 
-def create_socketio(app, control_state, secret_token: str):
+def create_socketio(app, control_state, secret_token: str, video=None):
     '''
-    함수 설명: Socket.IO 서버 생성 및 이벤트 바인딩
-    입력값: app(Flask), control_state(ControlState), secret_token(str)
+    함수 설명: Socket.IO 서버 생성 및 이벤트 바인딩(+얼굴인식 토글 연동)
+    입력값: app(Flask), control_state(ControlState), secret_token(str), video(Video|None)
     출력값: SocketIO 객체
     '''
     sio = SocketIO(app, cors_allowed_origins='*')
 
     @sio.on('connect')
     def on_connect():
-        token = app.current_request_args.get('token') if hasattr(app, 'current_request_args') else None
-        # 최소 골격: 쿼리스트링 토큰 검사 대신, 클라이언트 측 첫 이벤트에서 검사
         print('[SOCKET] client connected')
 
     @sio.on('auth')
@@ -33,7 +31,15 @@ def create_socketio(app, control_state, secret_token: str):
 
     @sio.on('toggle')
     def on_toggle(data):
-        control_state.update_toggle(data.get('name', ''), bool(data.get('on', False)))
+        name = data.get('name', '')
+        on = bool(data.get('on', False))
+        control_state.update_toggle(name, on)
+        # 얼굴 인식 토글을 영상 모듈에 전달
+        if video and name == 'face_detect':
+            try:
+                video.face_detect(on)
+            except Exception as e:
+                emit('state', {'warn': f'face_detect error: {e}'})
 
     @sio.on('btn')
     def on_btn(data):
@@ -44,4 +50,3 @@ def create_socketio(app, control_state, secret_token: str):
         control_state.set_voice(data.get('text', ''))
 
     return sio
-

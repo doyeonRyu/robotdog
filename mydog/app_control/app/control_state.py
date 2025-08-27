@@ -1,4 +1,3 @@
-# app/control_state.py
 import threading
 from dataclasses import dataclass, field
 from time import time

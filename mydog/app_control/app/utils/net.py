@@ -1,4 +1,3 @@
-# app/utils/net.py
 import os
 import socket
 

@@ -4,11 +4,12 @@ from .control_state import ControlState
 from .server import create_app
 from .robot.loop import loop
 from .utils.net import get_ip
+from .video import Video
 
 
 def main():
     '''
-    함수 설명: 서버와 제어 루프를 함께 기동하는 엔트리포인트
+    함수 설명: 서버와 제어 루프, 비디오 스트림을 함께 기동
     입력값: 없음
     출력값: 없음
     '''
@@ -17,19 +18,27 @@ def main():
     port = int(os.getenv('PORT', '8000'))
 
     cs = ControlState()
-    app, socketio = create_app(cs, secret_token)
+
+    # 비디오(MJPEG) 시작: Vilib가 설치되어 있지 않으면 내부에서 안전하게 실패 로그만 출력
+    video = Video(vflip=False, hflip=False, port=9000)
+    video.start()
+
+    app, socketio = create_app(cs, secret_token, video)
 
     # 상태 브로드캐스트 콜백
     def on_state(payload: dict):
         socketio.emit('state', payload)
 
-    # 제어 루프는 스레드로 실행
+    # 제어 루프 스레드
     t = threading.Thread(target=loop, args=(cs, on_state), daemon=True)
     t.start()
 
     ip = get_ip()
     print(f"[INFO] open http://{ip}:{port}  (토큰: {secret_token})")
-    socketio.run(app, host=host, port=port)
+    try:
+        socketio.run(app, host=host, port=port)
+    finally:
+        video.stop()
 
 
 if __name__ == '__main__':
