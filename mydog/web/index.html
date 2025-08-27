@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mydog Controller</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <div class="video">
+      <img id="stream" alt="video" />
+    </div>
+    <div class="panel">
+      <div class="row">
+        <input id="token" placeholder="토큰" />
+        <button id="connectBtn">연결</button>
+      </div>
+      <div class="row">
+        <div id="joyL" class="joy">L</div>
+        <div id="joyR" class="joy">R</div>
+      </div>
+      <div class="row">
+        <button class="cmd" data-name="sit">앉아</button>
+        <button class="cmd" data-name="stand up">서</button>
+        <button class="cmd" data-name="lie down">엎드려</button>
+      </div>
+      <div class="row">
+        <label><input type="checkbox" id="faceToggle" /> 얼굴인식</label>
+      </div>
+      <div class="row">
+        <button id="voiceBtn">음성 시작/정지</button>
+      </div>
+      <div class="row">
+        <div>거리: <span id="dist">-</span> cm</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 영상 스트림 URL은 서버가 띄워주는 포트와 별개(:9000/mjpg 사용 가정)
+    fetch('/js/app.js').then(r=>r.text()).then(eval);
+  </script>
+  <script src="/js/joystick.js"></script>
+  <script src="/js/voice.js"></script>
+</body>
+</html>
