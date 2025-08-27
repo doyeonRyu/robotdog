@@ -1,59 +1,77 @@
-<!--
-컨트롤러 화면 뼈대 (MJPEG 뷰, 조이스틱, 버튼, 토글, 상태표시)
--->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mydog Controller</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <title>Robot Dog Controller</title>
+  <link rel="stylesheet" href="css/style.css" />
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <div class="video">
-      <img id="stream" alt="video" />
-    </div>
-    <div class="panel">
-      <div class="row">
-        <input id="token" placeholder="토큰" />
-        <button id="connectBtn">연결</button>
-      </div>
-      <div class="row">
-        <div id="joyL" class="joy">L</div>
-        <div id="joyR" class="joy">R</div>
-      </div>
-      <div class="row">
-        <div class="column">
-          <button class="cmd" data-name="stand">stand</button>
-          <button class="cmd" data-name="sit">sit</button>
-          <button class="cmd" data-name="lie">lie</button>
-          <button class="cmd" data-name="lie_with_hands_out">lie_with_hands_out</button>
-        </div>
-        <div class="column">
-          <button class="cmd" data-name="trot">trot</button>
-          <button class="cmd" data-name="forward">forward</button>
-          <button class="cmd" data-name="backward">backward</button>
-        </div>
-        <div class="column">
-          <button class="cmd" data-name="turn_left">turn_left</button>
-          <button class="cmd" data-name="turn_right">turn_right</button>
+  <div class="container">
+    <header class="header">
+      <h1>Robot Dog Controller</h1>
+    </header>
 
+    <main class="content">
+      <section class="video">
+        <img id="stream" alt="video" />
+      </section>
+
+      <aside class="panel">
+        <div class="row">
+          <input id="token" placeholder="000000" />
+          <button id="connectBtn" class="btn">연결</button>
         </div>
-      </div>
-      <div class="row">
-        <label><input type="checkbox" id="faceToggle" />face detection</label>
-      </div>
-      <div class="row">
-        <button id="voiceBtn">Voice On / Off</button>
-      </div>
-      <div class="row">
-        <div>거리: <span id="dist">-</span> cm</div>
-      </div>
-    </div>
+
+        <div class="row two">
+          <!-- 왼쪽(이동) D-Pad -->
+          <div class="dpad" data-side="left">
+            <button class="dp" data-x="0" data-y="100">F</button>
+            <button class="dp" data-x="0" data-y="-100">B</button>
+            <button class="dp" data-x="-100" data-y="0">L</button>
+            <button class="dp" data-x="100" data-y="0">R</button>
+          </div>
+          <!-- 오른쪽(머리) D-Pad
+          <div class="dpad" data-side="right">
+            <button class="dp" data-x="0" data-y="100">위</button>
+            <button class="dp" data-x="0" data-y="-100">아래</button>
+            <button class="dp" data-x="-100" data-y="0">왼</button>
+            <button class="dp" data-x="100" data-y="0">오</button>
+          </div> -->
+        </div>
+
+        <div class="row buttons">
+          <button class="cmd btn" data-name="stand">stand</button>
+          <button class="cmd btn" data-name="sit">sit</button>
+          <button class="cmd btn" data-name="lie">lie</button>
+          <button class="cmd btn" data-name="lie_with_hands_out">lie_with_hands_out</button>
+
+          <button class="cmd btn" data-name="trot">trot</button>
+          <button class="cmd btn" data-name="forward">forward</button>
+          <button class="cmd btn" data-name="backward">backward</button>
+
+          <button class="cmd btn" data-name="turn_left">turn_left</button>
+          <button class="cmd btn" data-name="turn_right">turn_right</button>
+        </div>
+
+        <label class="row check">
+          <input type="checkbox" id="faceToggle" />
+          <span>face detection</span>
+        </label>
+
+        <div class="row">
+          <button id="voiceBtn" class="btn ghost">Voice On / Off</button>
+        </div>
+
+        <div class="row muted">
+          거리: <span id="dist">-</span> cm
+        </div>
+      </aside>
+    </main>
   </div>
 
+  <!-- 의존 순서: joystick.js / voice.js 먼저, 그다음 app.js -->
   <script src="js/joystick.js"></script>
   <script src="js/voice.js"></script>
   <script src="js/app.js"></script>

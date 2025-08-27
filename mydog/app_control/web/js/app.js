@@ -37,8 +37,8 @@
       __authHandler: null
     };
 
-    // 더미 영상(로컬 이미지, 사이즈: 750 x 600)
-    streamEl.width = 750;
+    // 더미 영상(로컬 이미지, 사이즈: 800 x 600)
+    streamEl.width = 800;
     streamEl.height = 600;
     streamEl.src = 'assets/placeholder.jpg';
 
