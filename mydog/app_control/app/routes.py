@@ -1,3 +1,4 @@
+# 정적 파일(web/) 서빙, 헬스체크같은 간단한 HTTP 엔드포인트
 from flask import Blueprint, send_from_directory
 import os
 

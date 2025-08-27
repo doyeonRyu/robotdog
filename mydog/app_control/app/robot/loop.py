@@ -1,31 +1,27 @@
 from math import atan2, sqrt, pi
 from time import sleep
 from .driver import my_dog
-from .commands import run_command, AVAILABLE_COMMANDS
+from .commands import CommandExecutor
 
 
 def map_range(val, in_min, in_max, out_min, out_max):
     '''
-    함수 설명: 입력 구간 값을 출력 구간으로 선형 매핑
-    입력값: val(float), in_min/max, out_min/max
-    출력값: float
     '''
     return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
 
 def loop(control_state, on_state):
     '''
-    함수 설명: 주 제어 루프(조이스틱/버튼/음성 상태를 읽어 동작 수행)
-    입력값: control_state(ControlState), on_state(callable)
-    출력값: 없음
     '''
+    executor = CommandExecutor(my_dog)
+
     command = None
     last_kx = last_ky = last_qx = last_qy = 0
 
     while True:
         snap = control_state.snapshot()
 
-        # 거리 센서 값 읽어 Web UI로 브로드캐스트
+        # 거리 센서 값 → UI 브로드캐스트
         distance = round(my_dog.read_distance(), 2)
         on_state({"distance": distance})
 
@@ -48,7 +44,7 @@ def loop(control_state, on_state):
             else:
                 command = None
 
-        # 우측 조이스틱(머리 제어)
+        # 우측 조이스틱(머리)
         qx, qy = snap['qx'], snap['qy']
         if (last_qx, last_qy) != (qx, qy):
             last_qx, last_qy = qx, qy
@@ -60,15 +56,14 @@ def loop(control_state, on_state):
                 pitch = 0
             my_dog.set_head(yaw=yaw, pitch=pitch)
 
-        # 버튼 명령
+        # 버튼 명령 / 음성 명령
         if snap['last_btn']:
             command = snap['last_btn']
-
-        # 음성 명령
-        if snap['voice_text'] and snap['voice_text'] in AVAILABLE_COMMANDS:
+        if snap['voice_text']:
             command = snap['voice_text']
 
-        # 명령 실행
-        run_command(my_dog, command)
+        # 명령 실행(연속 동작은 after 값을 반환받아 유지)
+        if command:
+            command = executor.run(command)
 
         sleep(0.02)

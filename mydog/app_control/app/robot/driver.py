@@ -1,61 +1,106 @@
-# 실제 Pidog 하드웨어 드라이버(가능한 안전하게 동작하도록 기본자세 위주)
-# 설치 전제: `pip install pidog robot-hat` (또는 SunFounder 스크립트로 설치)
 from time import sleep
 
 try:
     from pidog import Pidog
-except Exception as e:
+except Exception:
     Pidog = None
 
 
 class DogDriver:
     '''
-    함수 설명: Pidog 하드웨어 제어를 위한 어댑터 클래스
-    입력값: 없음(생성 시 내부 객체 초기화)
-    출력값: 없음
     '''
     def __init__(self):
-        # Pidog 라이브러리가 없는 환경에서도 서버 개발 테스트 가능하게 예외 처리
+        '''
+        '''
         self._dog = Pidog() if Pidog else None
-        # 초기 머리 각도(안전값)
+        # 머리 상태(yaw, roll, pitch)
         self._yaw = 0
-        self._pitch = 0
         self._roll = 0
-        # 전원/자세 초기화(필요 시 주석 해제)
+        self._pitch = 0
+        self._pitch_comp = 0
         if self._dog:
             try:
-                # my_dog 초기자세(서 있는 자세 또는 안정자세)
                 self._dog.do_action('stand')
             except Exception:
                 pass
 
-    def set_head(self, yaw=0, pitch=0, roll=0):
+    # --- 하드웨어 핸들 ---
+    def hw(self):
+        return self._dog
+
+    def head_state(self):
+        return [self._yaw, self._roll, self._pitch]
+
+    def pitch_comp(self):
+        return self._pitch_comp
+
+    # --- 핵심 제어 ---
+    def set_head(self, yaw=None, pitch=None, roll=None):
         '''
-        함수 설명: 머리(yaw/pitch/roll) 제어
-        입력값: yaw(int), pitch(int), roll(int)
-        출력값: 없음
         '''
-        self._yaw, self._pitch, self._roll = yaw, pitch, roll
+        if yaw is not None: self._yaw = int(yaw)
+        if pitch is not None: self._pitch = int(pitch)
+        if roll is not None: self._roll = int(roll)
         if not self._dog:
-            print(f"[HEAD] yaw={yaw} pitch={pitch} roll={roll}")
+            print(f"[HEAD] yaw={self._yaw} pitch={self._pitch} roll={self._roll}")
             return
         try:
-            # Pidog의 머리 서보 제어 메서드(키트 버전에 따라 API 차이가 있을 수 있음)
-            # 예: self._dog.head_move(yaw=yaw, pitch=pitch, roll=roll, speed=80)
-            self._dog.head_move(yaw=yaw, pitch=pitch, roll=roll, speed=80)
+            # Pidog의 head_move: 리스트 포즈 방식
+            self._dog.head_move([[self._yaw, self._roll, self._pitch]], pitch_comp=self._pitch_comp, immediately=True, speed=100)
+        except TypeError:
+            # 일부 버전은 키워드 인자를 받음
+            self._dog.head_move(yaw=self._yaw, pitch=self._pitch, roll=self._roll, speed=80)
+
+    def set_head_pitch_comp(self, pitch: int):
+        '''
+        '''
+        self._pitch_comp = int(pitch)
+        # 현재 머리 상태로 즉시 적용
+        if self._dog:
+            try:
+                self._dog.head_move([[self._yaw, self._roll, self._pitch]], pitch_comp=self._pitch_comp, immediately=True, speed=80)
+            except Exception:
+                pass
+
+    def do_action(self, name: str, speed: int = 80):
+        '''
+        '''
+        if not self._dog:
+            print(f"[ACTION] {name} speed={speed}")
+            sleep(0.1)
+            return
+        try:
+            self._dog.do_action(name, speed=speed)
         except Exception as e:
-            print(f"[HEAD][ERR] {e}")
+            print(f"[ACTION][ERR] {e}")
+
+    def wait_all_done(self):
+        '''
+        '''
+        if self._dog and hasattr(self._dog, 'wait_all_done'):
+            try:
+                self._dog.wait_all_done()
+            except Exception:
+                pass
+        else:
+            sleep(0.1)
+
+    def is_legs_done(self):
+        '''
+        '''
+        if self._dog and hasattr(self._dog, 'is_legs_done'):
+            try:
+                return bool(self._dog.is_legs_done())
+            except Exception:
+                return True
+        return True
 
     def read_distance(self):
         '''
-        함수 설명: 초음파 센서 거리 읽기(cm)
-        입력값: 없음
-        출력값: float
         '''
         if not self._dog:
             return 42.0
         try:
-            # 키트 버전에 따라: self._dog.read_distance() 또는 self._dog.ultrasonic.read()
             if hasattr(self._dog, 'read_distance'):
                 return float(self._dog.read_distance())
             if hasattr(self._dog, 'ultrasonic') and hasattr(self._dog.ultrasonic, 'read'):
@@ -64,41 +109,15 @@ class DogDriver:
             print(f"[DIST][ERR] {e}")
         return 0.0
 
-    def do(self, action: str):
+    def close(self):
         '''
-        함수 설명: 문자열 명령을 Pidog 동작으로 매핑하여 실행
-        입력값: action(str) – 'sit', 'stand up', 'lie down', 'forward' 등
-        출력값: 없음
         '''
-        if not self._dog:
-            print(f"[ACTION] {action}")
-            sleep(0.1)
-            return
         try:
-            # 기본 동작 매핑(키트 제공 do_action 이름과 맞추기)
-            mapping = {
-                'sit': 'sit',
-                'stand up': 'stand',
-                'lie down': 'lie',
-                'bark': 'bark',
-                'wag tail': 'wag_tail',
-                'pant': 'pant',
-                'scratch': 'scratch',
-                # 이동류는 키트별 API가 다름: 간단히 방향 액션 존재 시 사용
-                'forward': 'forward',
-                'backward': 'backward',
-                'turn left': 'turn_left',
-                'turn right': 'turn_right',
-            }
-            act = mapping.get(action)
-            if act:
-                # 대부분의 SunFounder 예제는 do_action(name, speed) 형태
-                self._dog.do_action(act, speed=80)
-            else:
-                print(f"[ACTION][WARN] Unknown: {action}")
-        except Exception as e:
-            print(f"[ACTION][ERR] {e}")
+            if self._dog and hasattr(self._dog, 'close'):
+                self._dog.close()
+        except Exception:
+            pass
 
 
-# 전역 드라이버 인스턴스
+# 전역 인스턴스
 my_dog = DogDriver()

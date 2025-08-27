@@ -1,3 +1,4 @@
+# Flask 앱 생성, 라우팅.소캣 초기화 연결
 import os
 from flask import Flask, request
 from .routes import bp as routes_bp

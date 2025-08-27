@@ -1,3 +1,4 @@
+# 장치 IP 조회, 포트 상수 등 네트워크 유틸
 import os
 import socket
 

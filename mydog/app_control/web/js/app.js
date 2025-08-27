@@ -1,3 +1,4 @@
+// 소켓 연결.인증, 이벤트 송수신, 디자인 미리보기 모드 지원
 (() => {
   const search = new URLSearchParams(location.search);
   const designMode = search.get('design') === '1';

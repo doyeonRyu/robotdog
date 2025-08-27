@@ -1,3 +1,4 @@
+# Socket.IO 이벤트 핸들러 (stick/btn/toggle/voice). 토큰 인증, 상태 푸시, 얼굴인식 토글 연동
 from flask_socketio import SocketIO, emit, disconnect
 
 

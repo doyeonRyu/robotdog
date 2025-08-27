@@ -1,3 +1,4 @@
+# 개발용 스크립트 *가상환경 생성, 의존성 설치, 서버 실행
 #!/usr/bin/env bash
 set -e
 python -m venv .venv || true

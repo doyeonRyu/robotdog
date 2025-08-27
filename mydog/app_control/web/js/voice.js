@@ -1,3 +1,4 @@
+// 브라우저 음성 인식 (Web Speech API) -> 텍스트 이벤트 송신
 (function(){
   window.__startVoice = function(onText){
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;

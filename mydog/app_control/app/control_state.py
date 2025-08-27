@@ -1,3 +1,4 @@
+# 웹에서 들어온 최신 입력 상태(조이스틱, 버튼, 음성, 토글)를 스레드 안전하게 보관, 제공
 import threading
 from dataclasses import dataclass, field
 from time import time

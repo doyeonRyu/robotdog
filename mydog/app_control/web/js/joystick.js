@@ -1,3 +1,4 @@
+// 가상 조이스틱 입력을 -100~100 범위로 변환해 콜백으로 전달
 (function(){
   function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 

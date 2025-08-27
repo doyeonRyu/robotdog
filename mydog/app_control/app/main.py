@@ -1,3 +1,4 @@
+# 엔트리 포인트. 서버 실행, 소캣 준비, 제어 루프 스레드 시작. 비디오 스트림 시작 / 종료
 import os
 import threading
 from .control_state import ControlState
