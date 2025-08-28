@@ -62,6 +62,12 @@ class GPTRunner:
         actions = []
 
         regex_dict = re.compile(r"\{.*\}")
+        answer_text = ""
+        actions = []
+
+        # 한 줄에 파이썬 dict/JSON 형태가 포함됨: 예) PiDog >>> {'actions': ['sit'], 'answer': '...'}
+        # 가장 바깥 {} 블록만 잡도록 non-greedy + DOTALL 억제
+        regex_dict = re.compile(r"\{[^{}]*\}")
         try:
             for line in proc.stdout:  # type: ignore
                 ln = line.rstrip("\n")
@@ -70,17 +76,31 @@ class GPTRunner:
                     print(f"[GPT][out] {ln[:160]}")
                 # 스트림을 그대로 로그처럼 흘려보내고 싶으면 on_stream(line)
                 # 여기서는 과도한 토큰 전송 방지를 위해 생략/옵션화
-                m = regex_dict.search(line)
+                # (선택) 필요 시 스트리밍 전달
+                # on_stream(ln)
+
+                m = regex_dict.search(ln)
                 if m:
                     try:
-                        data = ast.literal_eval(m.group(0))
+                        chunk = m.group(0)
+                        # 단일/이중따옴표 모두 허용: ast.literal_eval로 파이썬 dict 파싱
+                        data = ast.literal_eval(chunk)
                         if isinstance(data, dict):
-                            answer_text = str(data.get("answer", "")).strip()
-                            actions = list(data.get("actions", []) or [])
+                            a = data.get("actions", []) or []
+                            a = list(a) if isinstance(a, (list, tuple)) else [str(a)]
+                            ans = str(data.get("answer", "")).strip()
+                            # think 전용 중간 상태는 표시만 하고 넘어감(중복 로딩 방지)
+                            if a and all(x == "think" for x in a):
+                                on_status("thinking")
+                                continue
+                            # 그 외에는 첫 결과를 채택하고 루프 종료
+                            actions = a
+                            answer_text = ans
+                            break
                     except Exception:
                         pass
                 # 'speak start' 감지 시 상태 전송
-                if "speak start" in line.lower():
+                if "speak start" in ln.lower():
                     on_status("speaking")
         except Exception as e:
             on_error(f"read failed: {e}")
@@ -90,12 +110,11 @@ class GPTRunner:
             except Exception:
                 pass
 
-        # 말하기(TTS)
-        if self.tts and answer_text:
-            self._speak(answer_text)
-
-        # 완료 콜백
+        # 결과 처리
         if answer_text or actions:
+            # 말하기(TTS) → 완료 콜백
+            if self.tts and answer_text:
+                self._speak(answer_text)
             on_done(answer_text, actions)
         else:
             on_error("no answer parsed")
