@@ -107,6 +107,8 @@ class GPTRunner:
         finally:
             try:
                 proc.terminate()
+
+                
             except Exception:
                 pass
 
