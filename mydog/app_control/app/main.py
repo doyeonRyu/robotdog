@@ -6,6 +6,7 @@ from .server import create_app
 from .robot.loop import loop
 from .utils.net import get_ip
 from .video import Video
+from .gpt_runner import GPTRunner
 
 
 def main():
@@ -24,7 +25,16 @@ def main():
     video = Video(vflip=False, hflip=False, port=9000)
     video.start()
 
-    app, socketio = create_app(cs, secret_token, video)
+    # GPT 실행기 설정(사용자 제공 경로/명령)
+    gpt = GPTRunner(
+        workdir="~/pidog/gpt_examples",
+        python_bin="~/my_venv/bin/python3",
+        script="gpt_dog.py",
+        extra_args=["--keyboard"],
+        use_sudo=True
+    )
+
+    app, socketio = create_app(cs, secret_token, video, gpt)
 
     # 상태 브로드캐스트 콜백
     def on_state(payload: dict):

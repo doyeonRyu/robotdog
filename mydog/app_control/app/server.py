@@ -6,7 +6,7 @@ from .sockets import create_socketio
 from .video import Video
 
 
-def create_app(control_state, secret_token: str, video: Video | None = None):
+def create_app(control_state, secret_token: str, video: Video | None = None, gpt=None):
     '''
     함수 설명: Flask 앱과 Socket.IO 초기화
     입력값: control_state(ControlState), secret_token(str), video(Video|None)
@@ -20,5 +20,5 @@ def create_app(control_state, secret_token: str, video: Video | None = None):
     def _capture_args():
         app.current_request_args = request.args
 
-    socketio = create_socketio(app, control_state, secret_token, video)
+    socketio = create_socketio(app, control_state, secret_token, video, gpt)
     return app, socketio

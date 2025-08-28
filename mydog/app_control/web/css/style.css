@@ -56,6 +56,32 @@ body{
 .row.two{ justify-content:space-between; }
 .row.muted{ color:var(--muted); }
 
+/* --- Chat area --------------------------------------------------------- */
+.chat{
+  margin-top:18px;
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:12px; width: calc(750px + 280px + 32px);  /* 비디오+패널 폭과 동일 */
+}
+.chat-log{
+  height:180px; overflow:auto; padding:8px; border:1px dashed #e2e8f0;
+  border-radius:10px; background:#fafbfc;
+  font-size:14px; line-height:1.4;
+}
+.chat-input{ display:flex; gap:8px; margin-top:10px; }
+#chatText{
+  flex:1; min-width:0; height:38px; padding:8px 10px;
+  border:1px solid var(--line); border-radius:10px; outline:none;
+}
+#chatText:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(14,165,233,.14); }
+.bubble{ margin:6px 0; }
+.bubble.user{ color:#0b7285; }
+.bubble.assistant{ color:#343a40; }
+.bubble.sys{ color:#868e96; font-style:italic; }
+.loading{ display:inline-block; width:1em; text-align:left; }
+.loading::after{ content:'…'; animation: dots 1s steps(3,end) infinite; }
+@keyframes dots{ 0%{content:''} 33%{content:'.'} 66%{content:'..'} 100%{content:'...'} }
+
 /* Inputs & Buttons */
 #token{
   flex:1; min-width:0; height:36px; padding:6px 10px;

@@ -60,15 +60,26 @@
           <span>face detection</span>
         </label>
 
+        <!--
         <div class="row">
           <button id="voiceBtn" class="btn ghost">Voice On / Off</button>
         </div>
-
+        -->
+        
         <div class="row muted">
           거리: <span id="dist">-</span> cm
         </div>
       </aside>
     </main>
+    <!-- Chat area: 화면과 명령 버튼 아래 -->
+    <section class="chat">
+      <div id="chatLog" class="chat-log"></div>
+      <div class="chat-input">
+          <input id="chatText" placeholder="명령이나 질문을 입력하세요…" />
+          <button id="sendBtn" class="btn">전송</button>
+          <button id="voiceToggle" class="btn ghost">Voice On / Off</button>
+      </div>
+    </section>
   </div>
 
   <!-- 의존 순서: joystick.js / voice.js 먼저, 그다음 app.js -->
