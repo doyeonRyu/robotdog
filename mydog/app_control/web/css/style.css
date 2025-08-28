@@ -15,7 +15,7 @@ html,body{height:100%}
 body{
   margin:0; font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   color:var(--ink); background:var(--bg);
-  display:flex; align-items:center; justify-content:center;
+  /* 페이지 스크롤 허용: 제목이 짤리지 않도록 세로 중앙정렬 제거 */
 }
 
 /* --- Layout ------------------------------------------------------------- */

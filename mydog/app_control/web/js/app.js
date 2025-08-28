@@ -21,6 +21,7 @@
 
   let socket = null;
   let authed = false;
+  let loaderEl = null; // 로딩 말풍선 DOM
 
   if (designMode) {
     // 디자인 미리보기: 서버/소켓 없이도 UI를 확인할 수 있게 더미 소켓 주입

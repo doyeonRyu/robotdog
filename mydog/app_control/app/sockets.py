@@ -63,7 +63,7 @@ def create_socketio(app, control_state, secret_token: str, video=None, gpt=None)
             emit('chat_error', {'msg': 'empty prompt'})
             return
         # 상태: 생성 시작
-        emit('chat_status', {'state': 'thinking'})
+        # emit('chat_status', {'state': 'thinking'})
 
         def _on_status(state: str):
             sio.emit('chat_status', {'state': state})
