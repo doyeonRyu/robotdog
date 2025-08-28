@@ -27,7 +27,7 @@ def main():
 
     # GPT 실행기 설정(사용자 제공 경로/명령)
     gpt = GPTRunner(
-        workdir="~/pidog/gpt_examples",
+        workdir="~/pidog/gpt",
         python_bin="~/my_venv/bin/python3",
         script="gpt_dog.py",
         extra_args=["--keyboard"],
