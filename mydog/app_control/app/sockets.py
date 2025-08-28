@@ -62,16 +62,20 @@ def create_socketio(app, control_state, secret_token: str, video=None, gpt=None)
         if not text:
             emit('chat_error', {'msg': 'empty prompt'})
             return
+        print(f"[CHAT] user -> GPT: {text[:120]!r}")
         # 상태: 생성 시작
         # emit('chat_status', {'state': 'thinking'})
 
         def _on_status(state: str):
+            print(f"[CHAT] status: {state}")
             sio.emit('chat_status', {'state': state})
 
         def _on_stream(delta: str):
+            # print(f\"[CHAT] stream: {delta!r}\")
             sio.emit('chat_stream', {'delta': delta})
 
         def _on_done(answer: str, actions: list[str] | None):
+            print(f"[CHAT] done. answer_len={len(answer)}, actions={actions or []}")
             sio.emit('chat_done', {'answer': answer, 'actions': actions or []})
             # 동작 실행(순차) - 다리 동작이 끝날 때까지 대기하며 순서대로 버튼 큐잉
             if actions:
@@ -89,6 +93,7 @@ def create_socketio(app, control_state, secret_token: str, video=None, gpt=None)
                 threading.Thread(target=run_actions, args=(actions,), daemon=True).start()
 
         def _on_error(msg: str):
+            print(f"[CHAT] error: {msg}")
             sio.emit('chat_error', {'msg': msg})
 
         threading.Thread(

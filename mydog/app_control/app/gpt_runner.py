@@ -32,6 +32,7 @@ class GPTRunner:
         """
         try:
             cmd = self._build_cmd()
+            print(f"[GPT] start: cwd={self.workdir} cmd={' '.join(shlex.quote(c) for c in cmd)}")
             proc = subprocess.Popen(
                 cmd,
                 cwd=self.workdir,
@@ -63,6 +64,10 @@ class GPTRunner:
         regex_dict = re.compile(r"\{.*\}")
         try:
             for line in proc.stdout:  # type: ignore
+                ln = line.rstrip("\n")
+                if ln:
+                    # 너무 길면 앞부분만
+                    print(f"[GPT][out] {ln[:160]}")
                 # 스트림을 그대로 로그처럼 흘려보내고 싶으면 on_stream(line)
                 # 여기서는 과도한 토큰 전송 방지를 위해 생략/옵션화
                 m = regex_dict.search(line)
