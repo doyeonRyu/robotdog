@@ -23,38 +23,6 @@
           <input id="token" placeholder="000000" />
           <button id="connectBtn" class="btn">연결</button>
         </div>
-
-        <div class="row two">
-          <!-- 왼쪽(이동) D-Pad -->
-          <div class="dpad" data-side="left">
-            <button class="dp" data-x="0" data-y="100">F</button>
-            <button class="dp" data-x="0" data-y="-100">B</button>
-            <button class="dp" data-x="-100" data-y="0">L</button>
-            <button class="dp" data-x="100" data-y="0">R</button>
-          </div>
-          <!-- 오른쪽(머리) D-Pad
-          <div class="dpad" data-side="right">
-            <button class="dp" data-x="0" data-y="100">위</button>
-            <button class="dp" data-x="0" data-y="-100">아래</button>
-            <button class="dp" data-x="-100" data-y="0">왼</button>
-            <button class="dp" data-x="100" data-y="0">오</button>
-          </div> -->
-        </div>
-
-        <div class="row buttons">
-          <button class="cmd btn" data-name="stand">stand</button>
-          <button class="cmd btn" data-name="sit">sit</button>
-          <button class="cmd btn" data-name="lie">lie</button>
-          <button class="cmd btn" data-name="lie_with_hands_out">lie_with_hands_out</button>
-
-          <button class="cmd btn" data-name="trot">trot</button>
-          <button class="cmd btn" data-name="forward">forward</button>
-          <button class="cmd btn" data-name="backward">backward</button>
-
-          <button class="cmd btn" data-name="turn_left">turn_left</button>
-          <button class="cmd btn" data-name="turn_right">turn_right</button>
-        </div>
-
         <label class="row check">
           <input type="checkbox" id="faceToggle" />
           <span>face detection</span>
@@ -69,8 +37,46 @@
         <div class="row muted">
           거리: <span id="dist">-</span> cm
         </div>
+
+        <div class="row two">
+          <p><b>Legs</b></p>
+          <!-- 왼쪽(이동) D-Pad -->
+          <div class="dpad" data-side="left">
+            <button class="dp" data-x="0" data-y="100">↑</button>
+            <button class="dp" data-x="0" data-y="-100">↓</button>
+            <button class="dp" data-x="-100" data-y="0">←</button>
+            <button class="dp" data-x="100" data-y="0">→</button>
+          </div>
+
+          <!-- 오른쪽(머리) D-Pad -->
+          <p><b>Head</b></p>
+          <div class="dpad" data-side="left">
+            <button class="dp" data-x="0" data-y="100">↑</button>
+            <button class="dp" data-x="0" data-y="-100">↓</button>
+            <button class="dp" data-x="-100" data-y="0">←</button>
+            <button class="dp" data-x="100" data-y="0">→</button>
+          </div>
+
+        </div>
+
+      </aside>
+      <aside class="panel_buttons">
+        <div class="row buttons">
+          <button class="cmd btn" data-name="stand">stand</button>
+          <button class="cmd btn" data-name="sit">sit</button>
+          <button class="cmd btn" data-name="lie">lie</button>
+          <button class="cmd btn" data-name="lie_with_hands_out">lie_with_hands_out</button>
+
+          <button class="cmd btn" data-name="trot">trot</button>
+          <button class="cmd btn" data-name="forward">forward</button>
+          <button class="cmd btn" data-name="backward">backward</button>
+
+          <button class="cmd btn" data-name="turn_left">turn_left</button>
+          <button class="cmd btn" data-name="turn_right">turn_right</button>
+        </div>
       </aside>
     </main>
+    
     <!-- Chat area: 화면과 명령 버튼 아래 -->
     <section class="chat">
       <div id="chatLog" class="chat-log"></div>

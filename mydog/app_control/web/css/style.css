@@ -20,7 +20,7 @@ body{
 
 /* --- Layout ------------------------------------------------------------- */
 .container{
-  width: calc(800px + 280px + 32px);   /* 비디오(800) + 패널(280) + 간격 */
+  width: calc(800px + 800px + 32px);   /* 비디오(800) + 패널(400) + 간격 */
   max-width: 100vw; padding:20px;
 }
 .header{
@@ -28,7 +28,6 @@ body{
   margin-bottom:14px;
 }
 .header h1{ margin:0; font-size:22px; font-weight:700; letter-spacing:.2px; }
-.hint{ color:var(--muted); font-size:12px; }
 
 .content{
   display:flex; gap:32px; align-items:flex-start;
@@ -47,13 +46,23 @@ body{
 
 /* --- Control panel ------------------------------------------------------ */
 .panel{
-  width:280px; height: calc(800px * 0.75);   /* 비디오 높이(≈562.5px)와 맞춤 */
+  width:400px; height: 600px;   /* 비디오 높이(≈562.5px)와 맞춤 */
   background:var(--card); border:1px solid var(--line);
   border-radius:var(--radius); box-shadow:var(--shadow);
   padding:12px; display:flex; flex-direction:column; gap:12px; overflow:auto;
 }
-.row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-.row.two{ justify-content:space-between; }
+.panel_buttons{
+  width:400px; height: 600px;   /* 비디오 높이(≈562.5px)와 맞춤 */
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:12px; display:flex; flex-direction:column; gap:12px; overflow:auto;
+}
+.row{ display:grid; gap:10px; align-items:center; flex-wrap:wrap; }
+.row.two {
+  display: flex;         /* Legs와 Head 나란히 */
+  justify-content: center;
+  gap: 40px;             /* 두 박스 사이 간격 */
+}
 .row.muted{ color:var(--muted); }
 
 /* --- Chat area --------------------------------------------------------- */
@@ -61,7 +70,7 @@ body{
   margin-top:18px;
   background:var(--card); border:1px solid var(--line);
   border-radius:var(--radius); box-shadow:var(--shadow);
-  padding:12px; width: calc(750px + 280px + 32px);  /* 비디오+패널 폭과 동일 */
+  padding:12px; width: calc(800px + 400px + 32px);  /* 비디오+패널 폭과 동일 */
 }
 .chat-log{
   height:180px; overflow:auto; padding:8px; border:1px dashed #e2e8f0;
@@ -103,21 +112,21 @@ body{
 
 /* Joysticks */
 /* 작은 방향패드(위/아래/왼/오) */
-.dpad{
-  display:grid; grid-template-columns: repeat(2, 56px);
-  grid-template-rows: repeat(2, 56px); gap:8px;
-  padding:6px; border:1px solid var(--line); border-radius:12px;
-  background:#f8f9fa;
-}
-.dpad .dp{
-  width:56px; height:56px; border-radius:10px;
-  border:1px solid var(--line); background:#fff; cursor:pointer;
-  font-weight:600; color:#495057;
-  transition: transform .04s ease, background .15s ease, border-color .15s ease;
-}
-.dpad .dp:hover{ background:#f1f5f9; border-color:#d8dde5; }
-.dpad .dp:active{ transform: translateY(1px); }
 
-/* Buttons grid spacing */
-.buttons .btn{ flex: 1 1 48%; }  /* 2열 그리드 느낌으로 깔끔하게 */
-.check{ user-select:none; gap:8px; }
+.dpad {
+  display: grid; 
+  grid-template-columns: 80px 80px; /* 2열 */
+  grid-template-rows: 80px 80px;    /* 2행 */
+  gap: 10px;
+  padding: 15px;
+  border: 2px solid #000000;
+  border-radius: 12px;
+  background: #f9f9f9;
+}
+
+.dpad .dp {
+  width: 80px;
+  height: 80px;
+  font-size: 18px;
+  border-radius: 8px;
+}
