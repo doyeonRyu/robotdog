@@ -57,6 +57,7 @@ def walk_action(index: int):
 
     # 본 동작 실행
     my_dog.do_action(name, step_count=10, speed=speed, pitch_comp=last_head_pitch)
+    my_dog.wait_legs_done()
 
 
 def print_menu():

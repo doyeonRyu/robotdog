@@ -56,6 +56,7 @@ def main():
             
             # 본 동작 실행
             my_dog.do_action(name, step_count=10, speed=speed, pitch_comp=last_head_pitch)
+            my_dog.wait_all_done()
 
     def print_menu():
         print("\n=== 동작을 입력하세요. (Ctrl+C/q로 종료) ===")
