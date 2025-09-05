@@ -1,8 +1,9 @@
 from openai import OpenAI
 import os
-
-# 환경변수에 API 키 설정
-# export OPENAI_API_KEY="your_api_key"
+from gpt.keys import OPENAI_API_KEY, OPENAI_ASSISTANT_ID
+from dog import Mydog
+import time
+import sys
 
 # OpenAI API 클라이언트 생성 (환경 변수 키 사용)
 client = OpenAI()
