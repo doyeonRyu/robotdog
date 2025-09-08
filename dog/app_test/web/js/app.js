@@ -1,4 +1,11 @@
 // web/app.js
+// server/app.py 예시
+
+
+# app_test 폴더를 루트로 서빙
+app.mount("/", StaticFiles(directory="app_test", html=True), name="static")
+
+# 여기서 /api/* 라우터들 include_router(...) 해주세요
 
 // 기본 설정
 const BASE = "http://192.168.0.151:8000";
