@@ -30,11 +30,14 @@ def main():
         workdir="~/pidog/gpt",
         python_bin="~/my_venv/bin/python3",
         script="gpt_dog.py",
-        extra_args=["--keyboard"],
+        extra_args=["--keyboard", "--voice"],
         use_sudo=False  # sudo 비번 대기로 멈추는 현상 방지
     )
-    print("[GPT] Runner ready: ~/pidog/gpt_examples gpt_dog.py --keyboard")
-
+    if gpt.extra_args == "--keyboard":
+        print("[GPT] Runner ready: ~/pidog/gpt_examples gpt_dog.py --keyboard")
+    elif gpt.extra_args == "--voice":
+        print("[GPT] Runner ready: ~/pidog/gpt_examples gpt_dog.py --voice")
+        
     app, socketio = create_app(cs, secret_token, video, gpt)
 
     # 상태 브로드캐스트 콜백
