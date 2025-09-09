@@ -159,6 +159,7 @@ function setVoiceHint(text) {
   if (voiceBtn) voiceBtn.textContent = text;
 }
 
+
 // =============== 카메라 ===============
 export function mountCamera(imgEl) {
   // ✅ 프록시 경로 사용 (server/app.py에 /camera 라우트 구현되어 있어야 함)
