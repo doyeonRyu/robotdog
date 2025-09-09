@@ -70,3 +70,25 @@ class Video:
                     return True
         print("[VIDEO][ERR] failed to start video after retries")
         return False
+    def stop(self):
+        """내부에서 시작한 경우에만 Vilib 종료."""
+        try:
+            # 내부 서버/프로세스 종료 (있을 때)
+            if getattr(self, "_server", None):
+                try:
+                    self._server.shutdown()
+                except Exception:
+                    pass
+                self._server = None
+        finally:
+            # 외부 라이브러리 정리 (예: Vilib 사용 시)
+            try:
+                # from vilib import Vilib
+                # Vilib.camera_close()
+                pass
+            except Exception:
+                pass
+            self._ok = False
+            
+    def close(self):
+        self.stop()
