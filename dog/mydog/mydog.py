@@ -6,7 +6,7 @@ from multiprocessing import Process, Value, Lock
 import threading
 import numpy as np
 from math import pi, sin, cos, sqrt, acos, atan2, atan
-from dog.robot_hat import Robot, Pin, Ultrasonic, utils, Music, I2C
+from dog.robothat import Robot, Pin, Ultrasonic, utils, Music, I2C
 from .sh3001 import Sh3001
 from .rgb_strip import RGBStrip
 from .sound_direction import SoundDirection
