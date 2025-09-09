@@ -106,11 +106,17 @@
 
   // 버튼들 → 명령 이벤트
   document.querySelectorAll('.cmd').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (!authed) return alert('먼저 연결하세요');
-      socket.emit('btn', { name: btn.dataset.name });
+    btn.addEventListener('click', async () => {
+      const action = btn.dataset.name;
+      try {
+        const res = await api("/api/action", { action });
+        console.log(res);
+      } catch (err) {
+        console.error("요청 실패:", err);
+      }
     });
   });
+
 
   faceToggle.onchange = () => {
     if (!authed) return alert('먼저 연결하세요');
