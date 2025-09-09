@@ -1,27 +1,26 @@
+# app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import uvicorn
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 개발 단계
+    allow_origins=["*"],  # 개발 단계: 데스크탑에서 접근 허용
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 정적(프런트) 서빙: http://<IP>:8000/ 에서 index.html 열림
+# 정적 파일 서빙: app_test 폴더(현재 디렉터리)를 루트로 사용
+# 따라서 http://<IP>:8000/ 로 접속하면 index.html 이 열립니다.
 app.mount("/", StaticFiles(directory=".", html=True), name="static")
 
-# --- API 라우터 붙이기 ---
-# 서버 라우터(있으면) 경로에 맞게 import 수정하세요.
-# 예: robotdog/server/routes_gpt.py 라면 PYTHONPATH에 repo 루트를 넣고 아래처럼:
-# from server.routes_gpt import router as gpt_router
-# from server.routes_actions import router as actions_router
-# app.include_router(gpt_router)
-# app.include_router(actions_router)
-
-# 임시 헬스체크
+# (선택) 헬스체크
 @app.get("/api/health")
 def health():
     return {"ok": True}
+
+# python -m app.main 으로 실행될 때 uvicorn 기동
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
