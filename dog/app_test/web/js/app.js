@@ -1,17 +1,10 @@
 // web/app.js
-// server/app.py 예시
 
-
-# app_test 폴더를 루트로 서빙
-app.mount("/", StaticFiles(directory="app_test", html=True), name="static")
-
-# 여기서 /api/* 라우터들 include_router(...) 해주세요
-
-// 기본 설정
-const BASE = "http://192.168.0.151:8000";
+// 같은 8000 포트에서 서빙 + API 호출이면 BASE 비워도 됨
+// (IP를 고정해서 쓰고 싶으면 기존처럼 const BASE = "http://192.168.0.151:8000"; 사용)
+const BASE = "";//"http://192.168.0.151:8000";
 const JSONHDR = { "Content-Type": "application/json" };
 
-// 공통 fetch 래퍼 (타임아웃+에러 로깅)
 async function api(path, payload, opt = {}) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), opt.timeout || 8000);
@@ -35,7 +28,6 @@ export async function actionButtons(action) {
   try {
     const data = await api("/api/action", { action });
     console.log("[action ok]", data);
-    // TODO: UI 상태바 업데이트
   } catch (e) {
     console.error("[action err]", e);
   }
@@ -69,7 +61,9 @@ let ws;
 let jsLastSend = 0;
 
 export function initJoystickWS() {
-  ws = new WebSocket(`ws://${location.hostname}:8000/ws/control`);
+  // 같은 호스트/포트 기준
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(`${proto}://${location.host}/ws/control`);
   ws.onopen = () => console.log("[ws] open");
   ws.onclose = () => console.log("[ws] closed");
   ws.onerror = (e) => console.error("[ws] error", e);
@@ -96,10 +90,9 @@ export function handleJoystick(vx, vy, wz) {
 // =============== 음성 명령 (길게 눌러 녹음) ===============
 let mediaRecorder;
 let chunks = [];
-let recState = "idle"; // idle | recording
+let recState = "idle";
 let voiceBtn;
 
-// 브라우저에서 녹음 권한 요청 & MediaRecorder 준비
 async function setupRecorder() {
   if (mediaRecorder) return;
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -121,30 +114,23 @@ async function setupRecorder() {
     recState = "idle";
     setVoiceHint("🎤");
 
-    // 업로드 (multipart/form-data)
     try {
       const fd = new FormData();
-      // 백엔드 /api/chat-voice 에서 file 필드로 받도록 구현되어 있어야 함
       const filename = `voice_${Date.now()}.${blob.type.includes("webm") ? "webm" : "ogg"}`;
       fd.append("file", blob, filename);
-      fd.append("lang", "ko");    // 필요 시 변경
-      fd.append("speak", "true"); // 서버에서 TTS 생성 여부
+      fd.append("lang", "ko");
+      fd.append("speak", "true");
       fd.append("voice", "alloy");
 
-      // UI에 임시로 "…(인식 중)" 말풍선
       appendBubble("user", "🎙️ (음성 인식 중...)");
 
       const res = await fetch(`${BASE}/api/chat-voice`, { method: "POST", body: fd });
       const data = await res.json();
       console.log("[voice chat ok]", data);
 
-      // 인식된 텍스트를 유저 말풍선으로 교체/추가
       if (data.text) appendBubble("user", data.text);
-
-      // GPT 답변
       if (data.reply) appendBubble("bot", data.reply);
 
-      // 음성 재생
       if (data.audio_url) {
         const audio = new Audio(`${BASE}${data.audio_url.startsWith("/") ? "" : "/"}${data.audio_url}`);
         audio.play().catch(console.warn);
@@ -159,7 +145,7 @@ async function setupRecorder() {
 function startRecording() {
   if (!mediaRecorder || recState === "recording") return;
   chunks = [];
-  mediaRecorder.start(100); // 100ms 단위로 dataavailable
+  mediaRecorder.start(100);
   recState = "recording";
   setVoiceHint("● 녹음 중… 떼면 전송");
 }
@@ -169,14 +155,17 @@ function stopRecording() {
   mediaRecorder.stop();
 }
 
-// UI 헬퍼 (보이스 버튼 레이블)
 function setVoiceHint(text) {
   if (voiceBtn) voiceBtn.textContent = text;
 }
 
 // =============== 카메라 ===============
 export function mountCamera(imgEl) {
-  imgEl.src = "http://192.168.0.151:9000/mjpg";
+  // ✅ 프록시 경로 사용 (server/app.py에 /camera 라우트 구현되어 있어야 함)
+  imgEl.src = "/camera";
+
+  // 직접 접근을 쓰려면 아래를 사용(프록시 제거 가능)
+  // imgEl.src = `http://${location.hostname}:9000/?action=stream`;
 }
 
 // =============== 말풍선 유틸 ===============
@@ -197,12 +186,10 @@ window.addEventListener("DOMContentLoaded", async () => {
   const cam = document.getElementById("camera-view");
   if (cam) mountCamera(cam);
 
-  // 액션 버튼
   document.querySelectorAll("[data-action]").forEach((btn) => {
     btn.addEventListener("click", () => actionButtons(btn.dataset.action));
   });
 
-  // 채팅(텍스트) 전송
   const input = document.getElementById("chat-input");
   const send = document.getElementById("chat-send");
   if (send && input) {
@@ -211,7 +198,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       input.value = "";
       handleChatSend(text);
     });
-    // Enter로 전송 (Shift+Enter는 줄바꿈)
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -222,7 +208,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 보이스(길게 누르기: 마우스/터치 지원)
   voiceBtn = document.getElementById("chat-voice");
   if (voiceBtn) {
     try {
@@ -231,30 +216,11 @@ window.addEventListener("DOMContentLoaded", async () => {
       console.error("마이크 권한 필요:", e);
       setVoiceHint("🎤(권한 필요)");
     }
-
-    // 마우스
-    voiceBtn.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      startRecording();
-    });
-    voiceBtn.addEventListener("mouseup", (e) => {
-      e.preventDefault();
-      stopRecording();
-    });
-    voiceBtn.addEventListener("mouseleave", (e) => {
-      if (recState === "recording") stopRecording();
-    });
-
-    // 터치
-    voiceBtn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      startRecording();
-    }, { passive: false });
-    voiceBtn.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      stopRecording();
-    }, { passive: false });
-
+    voiceBtn.addEventListener("mousedown", (e) => { e.preventDefault(); startRecording(); });
+    voiceBtn.addEventListener("mouseup",   (e) => { e.preventDefault(); stopRecording(); });
+    voiceBtn.addEventListener("mouseleave",(e) => { if (recState === "recording") stopRecording(); });
+    voiceBtn.addEventListener("touchstart",(e) => { e.preventDefault(); startRecording(); }, { passive: false });
+    voiceBtn.addEventListener("touchend",  (e) => { e.preventDefault(); stopRecording(); }, { passive: false });
     setVoiceHint("🎤");
   }
 });

@@ -59,8 +59,8 @@
     socket = ioSock;
 
     // 영상 스트림 주소 구성(같은 호스트 가정)
-    const mjpegHost = `${location.protocol}//${location.hostname}:9000`;
-    streamEl.src = `${mjpegHost}/mjpg`;
+  const mjpegHost = `${location.protocol}//${location.hostname}:9000`;
+  streamEl.src = `${mjpegHost}/?action=stream`;
 
     connectBtn.onclick = () => {
       socket.emit('auth', { token: tokenEl.value || '000000' });
