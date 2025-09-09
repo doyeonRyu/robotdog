@@ -1,0 +1,7 @@
+# 포트, 데드존 등 기본 설정 샘플
+server:
+  port: 8000
+video:
+  port: 9000  # 참고용(본 골격에선 직접 사용하지 않음)
+control:
+  dead_zone: 20

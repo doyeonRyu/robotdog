@@ -1,0 +1,132 @@
+/* --- Base --------------------------------------------------------------- */
+:root{
+  --bg:#f6f7f9;
+  --card:#ffffff;
+  --ink:#222;
+  --muted:#7a7f85;
+  --line:#e8eaef;
+  --accent:#0ea5e9;         /* 포커스/호버 포인트 컬러(밝은 하늘색) */
+  --radius:14px;
+  --shadow:0 8px 28px rgba(0,0,0,.08);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  color:var(--ink); background:var(--bg);
+  /* 페이지 스크롤 허용: 제목이 짤리지 않도록 세로 중앙정렬 제거 */
+}
+
+/* --- Layout ------------------------------------------------------------- */
+.container{
+  width: calc(800px + 800px + 32px);   /* 비디오(800) + 패널(400) + 간격 */
+  max-width: 100vw; padding:20px;
+}
+.header{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:14px;
+}
+.header h1{ margin:0; font-size:22px; font-weight:700; letter-spacing:.2px; }
+
+.content{
+  display:flex; gap:32px; align-items:flex-start;
+}
+
+/* --- Video card (4:3, 심플 카드) --------------------------------------- */
+.video{
+  width:800px; aspect-ratio: 4 / 3;     /* 4:3 비율 유지 */
+  background:#000; border-radius:var(--radius); overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.video img{
+  width:100%; height:100%; object-fit:cover;  /* 레터박스 없도록 채움 */
+  display:block;
+}
+
+/* --- Control panel ------------------------------------------------------ */
+.panel{
+  width:400px; height: 600px;   /* 비디오 높이(≈562.5px)와 맞춤 */
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:12px; display:flex; flex-direction:column; gap:12px; overflow:auto;
+}
+.panel_buttons{
+  width:400px; height: 600px;   /* 비디오 높이(≈562.5px)와 맞춤 */
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:12px; display:flex; flex-direction:column; gap:12px; overflow:auto;
+}
+.row{ display:grid; gap:10px; align-items:center; flex-wrap:wrap; }
+.row.two {
+  display: flex;         /* Legs와 Head 나란히 */
+  justify-content: center;
+  gap: 40px;             /* 두 박스 사이 간격 */
+}
+.row.muted{ color:var(--muted); }
+
+/* --- Chat area --------------------------------------------------------- */
+.chat{
+  margin-top:18px;
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:12px; width: calc(800px + 400px + 32px);  /* 비디오+패널 폭과 동일 */
+}
+.chat-log{
+  height:180px; overflow:auto; padding:8px; border:1px dashed #e2e8f0;
+  border-radius:10px; background:#fafbfc;
+  font-size:14px; line-height:1.4;
+}
+.chat-input{ display:flex; gap:8px; margin-top:10px; }
+#chatText{
+  flex:1; min-width:0; height:38px; padding:8px 10px;
+  border:1px solid var(--line); border-radius:10px; outline:none;
+}
+#chatText:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(14,165,233,.14); }
+.bubble{ margin:6px 0; }
+.bubble.user{ color:#0b7285; }
+.bubble.assistant{ color:#343a40; }
+.bubble.sys{ color:#868e96; font-style:italic; }
+.loading{ display:inline-block; width:1em; text-align:left; }
+.loading::after{ content:'…'; animation: dots 1s steps(3,end) infinite; }
+@keyframes dots{ 0%{content:''} 33%{content:'.'} 66%{content:'..'} 100%{content:'...'} }
+
+/* Inputs & Buttons */
+#token{
+  flex:1; min-width:0; height:36px; padding:6px 10px;
+  border:1px solid var(--line); border-radius:10px; outline:none;
+}
+#token:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(14,165,233,.15); }
+
+.btn, .cmd{
+  height:34px; padding:6px 12px;
+  border-radius:10px; border:1px solid var(--line);
+  background:#fff; cursor:pointer;
+  transition: transform .04s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover, .cmd:hover{ background:#f1f5f9; border-color:#d8dde5; }
+.btn:active, .cmd:active{ transform: translateY(1px); }
+.btn.ghost{
+  background:#f8fafc; border-color:#e2e8f0;
+}
+
+/* Joysticks */
+/* 작은 방향패드(위/아래/왼/오) */
+
+.dpad {
+  display: grid; 
+  grid-template-columns: 80px 80px; /* 2열 */
+  grid-template-rows: 80px 80px;    /* 2행 */
+  gap: 10px;
+  padding: 15px;
+  border: 2px solid #000000;
+  border-radius: 12px;
+  background: #f9f9f9;
+}
+
+.dpad .dp {
+  width: 80px;
+  height: 80px;
+  font-size: 18px;
+  border-radius: 8px;
+}
