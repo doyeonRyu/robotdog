@@ -6,7 +6,7 @@ from multiprocessing import Process, Value, Lock
 import threading
 import numpy as np
 from math import pi, sin, cos, sqrt, acos, atan2, atan
-from dog import Robot, Pin, Ultrasonic, utils, Music, I2C
+from dog.robot_hat import Robot, Pin, Ultrasonic, utils, Music, I2C
 from .sh3001 import Sh3001
 from .rgb_strip import RGBStrip
 from .sound_direction import SoundDirection
@@ -23,6 +23,10 @@ warnings.filterwarnings("ignore") # ignore warnings for pygame # not work
               1,0 --[ ]-- 10,11
                      |
                     '9'
+
+
+
+
                     /
 
     legs pins: [2, 3, 7, 8, 0, 1, 10, 11]

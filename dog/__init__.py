@@ -7,4 +7,3 @@ from .vilib import Vilib
 from .gpt import OPENAI_API_KEY
 from .gpt import OPENAI_ASSISTANT_ID
 from .gpt import OpenAiHelper
-from .robot_hat import Robot, Pin, Ultrasonic, utils, Music, I2C
