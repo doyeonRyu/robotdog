@@ -1,0 +1,27 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>MyDog Minimal Control</title>
+<h2>MyDog Actions</h2>
+
+<button onclick="sendAction('stand')">stand</button>
+<button onclick="sendAction('sit')">sit</button>
+<button onclick="sendAction('lie')">lie</button>
+
+<pre id="out"></pre>
+
+<script>
+async function sendAction(name) {
+  const out = document.getElementById('out');
+  try {
+    const res = await fetch('/api/do_action', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name })
+    });
+    const data = await res.json();
+    out.textContent = JSON.stringify(data, null, 2);
+  } catch (err) {
+    out.textContent = 'error: ' + err.message;
+  }
+}
+</script>
