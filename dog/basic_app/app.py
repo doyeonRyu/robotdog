@@ -4,7 +4,7 @@ from dog import Mydog
 from pathlib import Path
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
-dog = Mydog()
+my_dog = Mydog()
 
 @app.route("/")
 def index():
@@ -23,7 +23,7 @@ def api_do_action():
     data = request.get_json(silent=True) or {}
     name = data.get("name", "")
     try:
-        res = dog.do_action(name)
+        res = my_dog.do_action(name)
         return jsonify(res)
     except Exception as e:
         return jsonify({"status": "error", "error": str(e)}), 400
